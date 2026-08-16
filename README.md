@@ -58,7 +58,3 @@ The browser tests use Playwright. Install Chromium once with `npx playwright ins
 `.github/workflows/deploy.yml` installs dependencies, runs lint, typecheck, tests and a production build, then publishes `dist` through the GitHub Pages deployment environment on pushes to `main`.
 
 Enable **Settings -> Pages -> GitHub Actions** in the repository once. The generated site is available at `https://USERNAME.github.io/REPOSITORY/`.
-
-## License
-
-Pixora is Free Software released under the GNU General Public License v3.0 or later. See `LICENSE` and `THIRD_PARTY_NOTICES.md` for the project and dependency licensing details.

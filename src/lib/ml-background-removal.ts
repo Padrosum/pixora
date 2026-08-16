@@ -8,7 +8,7 @@ type RemoveBackgroundEngine = (source: Blob, config: {
   progress: (key: string, current: number, total: number) => void
 }) => Promise<Blob>
 
-export const ML_MODEL_SIZE_LABEL = '~40 MB on first run'
+export const ML_MODEL_SIZE_LABEL = '~75 MB on first run (model + runtime)'
 
 let enginePromise: Promise<RemoveBackgroundEngine> | null = null
 
@@ -22,7 +22,8 @@ function loadEngine(): Promise<RemoveBackgroundEngine> {
 }
 
 function supportsWebGpu(): boolean {
-  return typeof navigator !== 'undefined' && 'gpu' in navigator
+  if (typeof navigator === 'undefined' || navigator.userAgent.toLowerCase().includes('firefox')) return false
+  return 'gpu' in navigator
 }
 
 export async function removeBackgroundWithModel(source: Blob, onProgress: ProgressHandler): Promise<Blob> {
@@ -30,6 +31,7 @@ export async function removeBackgroundWithModel(source: Blob, onProgress: Progre
   const device: MlDevice = supportsWebGpu() ? 'gpu' : 'cpu'
   const config = {
     device,
+    publicPath: `${import.meta.env.BASE_URL}models/background-removal/`,
     proxyToWorker: true,
     model: 'isnet_quint8' as const,
     output: { format: 'image/png' as const, quality: 1 },

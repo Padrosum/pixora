@@ -769,7 +769,7 @@ function Workspace({ images, activeImage, activeTool, batchError, batchItems, ba
         {activeTool === 'crop' && <CropSettings crop={settings.crop} onCropAspectChange={onCropAspectChange} onCropChange={onCropChange} />}
         {activeTool === 'rotate' && <RotateSettings settings={settings} onRotationChange={onRotationChange} onSettingsChange={onSettingsChange} />}
         {activeTool === 'adjust' && <AdjustSettings adjustments={settings.adjustments} onAdjustmentChange={(patch) => onSettingsChange({ adjustments: { ...settings.adjustments, ...patch } })} />}
-        {activeTool === 'remove-background' && <BackgroundSettings backgroundRemoval={settings.backgroundRemoval} isProcessing={isProcessing} mlProgress={mlProgress} mlStage={mlStage} onBackgroundChange={(patch) => onSettingsChange({ outputFormat: patch.mode === 'ml' ? 'image/png' : settings.outputFormat, backgroundRemoval: { ...settings.backgroundRemoval, ...patch } })} />}
+        {activeTool === 'remove-background' && <BackgroundSettings backgroundRemoval={settings.backgroundRemoval} isProcessing={isProcessing} mlProgress={mlProgress} mlStage={mlStage} processingError={processingError} onBackgroundChange={(patch) => onSettingsChange({ outputFormat: patch.mode === 'ml' ? 'image/png' : settings.outputFormat, backgroundRemoval: { ...settings.backgroundRemoval, ...patch } })} />}
         {activeTool === 'export' && <ExportSettings exportName={exportName} onExportNameChange={onExportNameChange} settings={settings} onSettingsChange={onSettingsChange} />}
         {!['compress', 'resize', 'convert', 'crop', 'rotate', 'adjust', 'remove-background', 'export'].includes(activeTool) && <ToolPlaceholder tool={currentTool} />}
         {processingError && <p className="processing-error" role="alert" aria-live="assertive"><Icon name="close" size={14} /> {processingError}</p>}
@@ -959,7 +959,7 @@ function AdjustSettings({ adjustments, onAdjustmentChange }: { adjustments: Adju
   </div>
 }
 
-function BackgroundSettings({ backgroundRemoval, isProcessing, mlProgress, mlStage, onBackgroundChange }: { backgroundRemoval: BackgroundRemoval; isProcessing: boolean; mlProgress: number; mlStage: string; onBackgroundChange: (patch: Partial<BackgroundRemoval>) => void }) {
+function BackgroundSettings({ backgroundRemoval, isProcessing, mlProgress, mlStage, processingError, onBackgroundChange }: { backgroundRemoval: BackgroundRemoval; isProcessing: boolean; mlProgress: number; mlStage: string; processingError: string; onBackgroundChange: (patch: Partial<BackgroundRemoval>) => void }) {
   const { t } = useI18n()
   const isMl = backgroundRemoval.mode === 'ml'
   return <div className="settings-content">
@@ -967,7 +967,7 @@ function BackgroundSettings({ backgroundRemoval, isProcessing, mlProgress, mlSta
     <div className="ai-mode-options"><button className={isMl ? '' : 'is-selected'} type="button" aria-pressed={!isMl} onClick={() => onBackgroundChange({ mode: 'local', enabled: true })}>{t('fastCutout')}</button><button className={isMl ? 'is-selected' : ''} type="button" aria-pressed={isMl} onClick={() => onBackgroundChange({ mode: 'ml', enabled: true })}>{t('aiModel')}</button></div>
     <div className="local-ai-card"><span className="format-dot dot-lime" /><div><strong>{isMl ? 'WebGPU / WASM inference' : t('runsOnDevice')}</strong><small>{isMl ? `${ML_MODEL_SIZE_LABEL}. Cached after download.` : t('noModelDownload')}</small></div></div>
     <button className={`button ${backgroundRemoval.enabled ? 'button-secondary' : 'button-primary'} background-toggle`} type="button" disabled={isProcessing} onClick={() => onBackgroundChange({ enabled: !backgroundRemoval.enabled })}>{backgroundRemoval.enabled ? (isMl ? t('aiRemovalOn') : t('backgroundRemovalOn')) : (isMl ? t('runAi') : t('removeBackground'))} <Icon name={backgroundRemoval.enabled ? 'check' : 'wand'} size={15} /></button>
-    {isMl && backgroundRemoval.enabled && <div className="ml-progress" aria-live="polite"><div className="batch-progress"><span style={{ width: `${Math.round(mlProgress * 100)}%` }} /></div><small>{isProcessing ? (mlStage || t('processingLocally')) : t('modelReady')}</small></div>}
+    {isMl && backgroundRemoval.enabled && <div className="ml-progress" aria-live="polite"><div className="batch-progress"><span style={{ width: `${Math.round(mlProgress * 100)}%` }} /></div><small>{processingError || (isProcessing ? (mlStage || t('processingLocally')) : t('modelReady'))}</small></div>}
     {!isMl && backgroundRemoval.enabled && <>
       <div className="setting-divider" />
       <AdjustmentSlider id="background-threshold" label="Color tolerance" value={backgroundRemoval.threshold} min={1} max={100} onChange={(value) => onBackgroundChange({ threshold: value })} />

@@ -12,7 +12,7 @@ Pixora is a free, local-first image toolkit for compressing, resizing, convertin
 - Dark-first, responsive workspace with keyboard-accessible controls
 - No account, backend, database, analytics or tracking
 
-The current Phase 6 workspace includes browser-native resize, compression, format conversion, export, crop, rotation, flipping, non-destructive adjustments, Worker-backed batch processing, ZIP export, a local background cutout pass, offline PWA support and accessible responsive controls.
+The current Phase 6 workspace includes browser-native resize, compression, format conversion, export, interactive crop handles, rotation, flipping, non-destructive adjustments, Worker-backed batch processing, ZIP export, a local background cutout pass, offline PWA support and accessible responsive controls.
 
 ## Privacy
 
@@ -30,7 +30,7 @@ The repository can be deployed to a GitHub Pages repository subpath. Vite uses a
 
 ## Local AI Background Removal
 
-The AI mode uses `@imgly/background-removal` with `onnxruntime-web`. Inference runs in the browser and prefers WebGPU, with a WASM/CPU fallback. The quantized model is loaded lazily on the first use and is approximately 40 MB; the browser caches it for later runs. Pixora never sends image data to the model provider. Model and WASM assets are fetched from the library's default asset host and can be self-hosted later through its `publicPath` configuration.
+The AI mode uses `@imgly/background-removal` with `onnxruntime-web`. Inference runs in the browser and prefers WebGPU, with a Firefox-safe WASM/CPU fallback. The quantized model and runtime assets are loaded lazily on the first use and total approximately 75 MB; the browser caches them for later runs. Pixora never sends image data to the model provider. The required model/runtime assets are self-hosted under `public/models/background-removal/` so GitHub Pages and Firefox do not depend on cross-origin model fetches.
 
 The background removal package is licensed under AGPL-3.0. See `THIRD_PARTY_NOTICES.md` before distributing a build.
 

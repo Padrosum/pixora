@@ -1,6 +1,6 @@
 /* global self, caches, fetch */
 
-const CACHE_NAME = 'pixora-shell-v1'
+const CACHE_NAME = 'pixora-shell-v2'
 const CORE_ASSETS = ['./', './index.html', './logo.svg', './favicon.svg', './manifest.webmanifest']
 
 self.addEventListener('install', (event) => {

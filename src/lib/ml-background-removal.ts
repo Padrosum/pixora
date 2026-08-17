@@ -26,12 +26,16 @@ function supportsWebGpu(): boolean {
   return 'gpu' in navigator
 }
 
+export function getModelPublicPath(baseUrl: string, baseUri: string): string {
+  return new URL(`${baseUrl}models/background-removal/`, baseUri).toString()
+}
+
 export async function removeBackgroundWithModel(source: Blob, onProgress: ProgressHandler): Promise<Blob> {
   const engine = await loadEngine()
   const device: MlDevice = supportsWebGpu() ? 'gpu' : 'cpu'
   const config = {
     device,
-    publicPath: `${import.meta.env.BASE_URL}models/background-removal/`,
+    publicPath: getModelPublicPath(import.meta.env.BASE_URL, document.baseURI),
     proxyToWorker: true,
     model: 'isnet_quint8' as const,
     output: { format: 'image/png' as const, quality: 1 },
